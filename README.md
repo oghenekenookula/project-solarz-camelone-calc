@@ -24,9 +24,38 @@ Design and size off-grid solar systems based on energy needs and backup time, op
 ## Documentation
 - High-Level Design: [HLD.md](HLD.md)
 - Roadmap: [ROADMAP.md](ROADMAP.md)
+- Phase 1 Plan: [docs/PHASE1_PLAN.md](docs/PHASE1_PLAN.md)
+- Data Integration Spec: [docs/DATA_INTEGRATION_SPEC.md](docs/DATA_INTEGRATION_SPEC.md)
 
 ## Current Status
-Documentation and planning phase. No production code yet.
+Phase 1 backend scaffold in progress (calculation engine and data integration).
+
+## Backend Quick Start
+1. Create a virtual environment.
+2. Install dependencies:
+
+```bash
+pip install -r backend/requirements.txt
+```
+
+3. Run the API:
+
+```bash
+uvicorn app.main:app --reload --app-dir backend
+```
+
+4. Try a calculation:
+
+```bash
+curl -X POST http://127.0.0.1:8000/calculate \
+	-H "Content-Type: application/json" \
+	-d '{"country":"Ghana","latitude":5.6,"longitude":-0.2,"daily_energy_kwh":8,"autonomy_days":3,"peak_load_kw":2,"use_mock":true}'
+```
+
+## Tests
+```bash
+pytest
+```
 
 ## Next Steps
 1. Finalize data integration specification (PVGIS and NREL endpoints).
