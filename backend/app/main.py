@@ -19,6 +19,7 @@ def calculate(req: CalculationRequest) -> CalculationResponse:
         return run_sizing(
             req,
             peak_sun_hours=solar_inputs.peak_sun_hours,
+            confidence_score=solar_inputs.confidence_score,
             data_sources=solar_inputs.data_sources,
             notes=solar_inputs.notes,
         )

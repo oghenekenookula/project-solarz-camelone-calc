@@ -15,6 +15,9 @@ class CalculationRequest(BaseModel):
     safety_factor: float = Field(1.1, gt=1)
     tilt_deg: float = Field(10, ge=0, le=90)
     azimuth_deg: float = Field(180, ge=0, le=360)
+    ambient_temp_c: float = Field(35, ge=-20, le=60)
+    temp_coeff_per_c: float = Field(-0.004, ge=-0.01, le=0)
+    enable_hybrid_generator: bool = Field(False)
     use_mock: bool = Field(True, description="Use mock solar data for offline runs")
 
 
@@ -29,7 +32,10 @@ class CalculationResponse(BaseModel):
     pv_size_kwp: float
     battery_capacity_kwh: float
     inverter_kw: float
+    generator_kw: float | None
     charge_controller_amps: float
     peak_sun_hours: float
+    temperature_derate_factor: float
+    confidence_score: float
     data_sources: list[DataSourceInfo]
     notes: list[str]

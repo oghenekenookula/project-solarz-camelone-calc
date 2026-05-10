@@ -58,3 +58,4 @@ def test_get_solar_inputs_nrel_fallback() -> None:
 
     assert result.peak_sun_hours == 5.1
     assert result.data_sources[0].name == "NREL PVWatts"
+    assert result.confidence_score == 0.75

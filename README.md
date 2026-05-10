@@ -26,6 +26,8 @@ Design and size off-grid solar systems based on energy needs and backup time, op
 - Roadmap: [ROADMAP.md](ROADMAP.md)
 - Phase 1 Plan: [docs/PHASE1_PLAN.md](docs/PHASE1_PLAN.md)
 - Data Integration Spec: [docs/DATA_INTEGRATION_SPEC.md](docs/DATA_INTEGRATION_SPEC.md)
+- Phase 2 Plan: [docs/PHASE2_PLAN.md](docs/PHASE2_PLAN.md)
+- UI Wireframes: [docs/UI_WIREFRAMES.md](docs/UI_WIREFRAMES.md)
 
 ## Current Status
 Phase 1 backend scaffold in progress (calculation engine and data integration).

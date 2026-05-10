@@ -26,9 +26,17 @@ def test_run_sizing_basic() -> None:
             retrieved_at="2026-05-10T00:00:00Z",
         )
     ]
-    response = run_sizing(req, peak_sun_hours=5.0, data_sources=sources, notes=[])
+    response = run_sizing(
+        req,
+        peak_sun_hours=5.0,
+        confidence_score=0.9,
+        data_sources=sources,
+        notes=[],
+    )
 
     assert response.pv_size_kwp > 0
     assert response.battery_capacity_kwh == 25.0
     assert response.inverter_kw == 2.5
     assert response.charge_controller_amps > 0
+    assert response.temperature_derate_factor < 1.0
+    assert response.confidence_score == 0.9

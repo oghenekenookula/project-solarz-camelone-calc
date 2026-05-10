@@ -10,6 +10,7 @@ from app.models.schemas import DataSourceInfo
 @dataclass(frozen=True)
 class SolarInputs:
     peak_sun_hours: float
+    confidence_score: float
     data_sources: list[DataSourceInfo]
     notes: list[str]
 
@@ -18,7 +19,7 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _mock_solar_inputs() -> SolarInputs:
+def _mock_solar_inputs(confidence_score: float = 0.5) -> SolarInputs:
     data_sources = [
         DataSourceInfo(
             name="PVGIS (mock)",
@@ -27,7 +28,12 @@ def _mock_solar_inputs() -> SolarInputs:
             notes="Mock data for offline development",
         )
     ]
-    return SolarInputs(peak_sun_hours=5.2, data_sources=data_sources, notes=["Mock data used"])
+    return SolarInputs(
+        peak_sun_hours=5.2,
+        confidence_score=confidence_score,
+        data_sources=data_sources,
+        notes=["Mock data used"],
+    )
 
 
 def _parse_pvgis_monthly_psh(monthly: list[dict]) -> float | None:
@@ -107,6 +113,7 @@ def _fetch_nrel_psh(lat: float, lon: float) -> SolarInputs | None:
     ]
     return SolarInputs(
         peak_sun_hours=peak_sun_hours,
+        confidence_score=0.8,
         data_sources=data_sources,
         notes=[],
     )
@@ -147,8 +154,10 @@ def get_solar_inputs(lat: float, lon: float, use_mock: bool) -> SolarInputs:
                 notes=source_note,
             )
         ]
+        confidence_score = 0.9 if source_note == "TMY monthly irradiance" else 0.85
         return SolarInputs(
             peak_sun_hours=peak_sun_hours,
+            confidence_score=confidence_score,
             data_sources=data_sources,
             notes=[],
         )
@@ -157,12 +166,16 @@ def get_solar_inputs(lat: float, lon: float, use_mock: bool) -> SolarInputs:
         try:
             nrel_inputs = _fetch_nrel_psh(lat, lon)
             if nrel_inputs is not None:
-                nrel_inputs.notes.extend(notes)
-                nrel_inputs.notes.append("NREL used as fallback")
-                return nrel_inputs
+                combined_notes = nrel_inputs.notes + notes + ["NREL used as fallback"]
+                return SolarInputs(
+                    peak_sun_hours=nrel_inputs.peak_sun_hours,
+                    confidence_score=min(nrel_inputs.confidence_score, 0.75),
+                    data_sources=nrel_inputs.data_sources,
+                    notes=combined_notes,
+                )
         except Exception as nrel_exc:
             notes.append(f"NREL fallback failed: {nrel_exc}")
 
-        fallback = _mock_solar_inputs()
+        fallback = _mock_solar_inputs(confidence_score=0.4)
         fallback.notes.extend(notes)
         return fallback
